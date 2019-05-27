@@ -7,6 +7,7 @@ import com.rakesh.parkinglot.exception.ParkingException;
 import com.rakesh.parkinglot.parkingstrategy.api.VehicleParkingStrategy;
 import com.rakesh.parkinglot.parkingstrategy.impl.ShortestDisFirstParkingStrategy;
 import com.rakesh.parkinglot.service.api.IParkingService;
+import com.rakesh.parkinglot.util.ParkingConstantUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,5 +71,10 @@ public class ParkingService implements IParkingService {
     @Override
     public void doSystemCleanup() {
 
+    }
+    private void validateParkingLot() throws ParkingException {
+        if(parkingManager == null){
+            throw new ParkingException(ParkingException.ErrorCode.PARKING_NOT_EXIST_ERROR.getMessage());
+        }
     }
 }
