@@ -43,8 +43,8 @@ public class LevelParkingManager<T extends Vehicle> implements ILevelParkingMana
         }
         slotVehicleMap = new ConcurrentHashMap<>();
         for (int i = 0; i < capacity; i++) {
-            slotVehicleMap.put(i, Optional.empty());
-            vehicleParkingStrategy.add(i);
+            slotVehicleMap.put(i+1, Optional.empty());
+            vehicleParkingStrategy.add(i+1);
         }
     }
 
@@ -54,7 +54,7 @@ public class LevelParkingManager<T extends Vehicle> implements ILevelParkingMana
         if (availability.get() == 0) {
             return ParkingConstantUtil.NOT_AVAILABLE;
         } else {
-            availableSlot = vehicleParkingStrategy.getSlot();
+            availableSlot = vehicleParkingStrategy.getSlot() ;
             if (slotVehicleMap.containsValue(Optional.of(vehicle))) {
                 return ParkingConstantUtil.VEHICLE_ALREADY_EXIST;
             }
@@ -80,20 +80,21 @@ public class LevelParkingManager<T extends Vehicle> implements ILevelParkingMana
     public List<String> getStatus() {
         List<String> statusList = new ArrayList<>();
         for (int i = 0; i < capacity.get(); i++) {
-            Optional<T> vehicle = slotVehicleMap.get(i);
+            Optional<T> vehicle = slotVehicleMap.get(i+1);
             if (vehicle.isPresent()) {
-                statusList.add(i + "\t\t" + vehicle.get().getRegistrationNumber() + "\t\t" + vehicle.get().getColor());
+                statusList.add((i+1) +"\t\t\t" + vehicle.get().getRegistrationNumber()
+                        + "\t\t\t" + vehicle.get().getColor());
             }
         }
         return statusList;
     }
 
     @Override
-    public List<String> getRegistrationNumbersForColor(String color) {
+    public List<String> getRegistrationNumbersForColor(String colour) {
         List<String> vehiclesWithColorList = new ArrayList<>();
         for (int i = 0; i < capacity.get(); i++) {
-            Optional<T> vehicle = slotVehicleMap.get(i);
-            if (vehicle.isPresent() && color.equalsIgnoreCase(vehicle.get().getColor())) {
+            Optional<T> vehicle = slotVehicleMap.get(i+1);
+            if (vehicle.isPresent() && colour.equalsIgnoreCase(vehicle.get().getColor())) {
                 vehiclesWithColorList.add(vehicle.get().getRegistrationNumber());
             }
         }
@@ -101,12 +102,12 @@ public class LevelParkingManager<T extends Vehicle> implements ILevelParkingMana
     }
 
     @Override
-    public List<Integer> getSlotNumbersFromColor(String color) {
+    public List<Integer> getSlotNumbersFromColor(String colour) {
         List<Integer> slotsWithVehicleColorList = new ArrayList<>();
         for (int i = 0; i < capacity.get(); i++) {
-            Optional<T> vehicle = slotVehicleMap.get(i);
-            if (vehicle.isPresent() && color.equalsIgnoreCase(vehicle.get().getColor())) {
-                slotsWithVehicleColorList.add(i);
+            Optional<T> vehicle = slotVehicleMap.get(i+1);
+            if (vehicle.isPresent() && colour.equalsIgnoreCase(vehicle.get().getColor())) {
+                slotsWithVehicleColorList.add(i+1);
             }
         }
         return slotsWithVehicleColorList;
@@ -116,9 +117,9 @@ public class LevelParkingManager<T extends Vehicle> implements ILevelParkingMana
     public int getSlotNoFromRegistrationNumber(String registrationNo) {
         int result = ParkingConstantUtil.NOT_FOUND;
         for (int i = 0; i < capacity.get(); i++) {
-            Optional<T> vehicle = slotVehicleMap.get(i);
+            Optional<T> vehicle = slotVehicleMap.get(i+1);
             if (vehicle.isPresent() && registrationNo.equalsIgnoreCase(vehicle.get().getRegistrationNumber())) {
-                result = i;
+                result = i+1;
                 break;
             }
         }
