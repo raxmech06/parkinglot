@@ -1,6 +1,7 @@
 package com.rakesh.parkinglot.request.process.impl;
 
 import com.rakesh.parkinglot.datamodel.Car;
+import com.rakesh.parkinglot.exception.ParkingException;
 import com.rakesh.parkinglot.request.process.api.IRequestProcessService;
 import com.rakesh.parkinglot.service.api.IParkingService;
 import com.rakesh.parkinglot.util.ParkingConstantUtil;
@@ -13,7 +14,7 @@ public class RequestProcessService implements IRequestProcessService {
     }
 
     @Override
-    public void executeRequest(String request) {
+    public void executeRequest(String request) throws ParkingException {
         int level = 0; //Tomorrow this parking lot can be extended to a multi storey parking.
         String[] requestParts = request.split(" ");
         String keyAction = requestParts[0];
