@@ -5,9 +5,9 @@ import com.rakesh.parkinglot.datamodel.Vehicle;
 import java.util.Optional;
 
 public interface IParkingService {
-    public void createParkingLot(int level, int capacity);
+    public void createParkingLot(int level, int capacity) throws ParkingException;
 
-    public Optional<Integer> park(int level, Vehicle vehicle);
+    public Optional<Integer> park(int level, Vehicle vehicle) throws ParkingException;
 
     public void unPark(int level, int slotNumber);
 
