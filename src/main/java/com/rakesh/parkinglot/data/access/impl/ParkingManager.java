@@ -1,0 +1,77 @@
+package com.rakesh.parkinglot.data.access.impl;
+
+import com.rakesh.parkinglot.data.access.api.ILevelParkingManager;
+import com.rakesh.parkinglot.data.access.api.IParkingManager;
+import com.rakesh.parkinglot.datamodel.Vehicle;
+import com.rakesh.parkinglot.parkingstrategy.api.VehicleParkingStrategy;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class ParkingManager<T extends Vehicle> implements IParkingManager {
+    private Map<Integer, ILevelParkingManager<T>> levelParkingManagerMap;
+    private static ParkingManager instance = null;
+
+    public static <T extends Vehicle> ParkingManager<T> getInstance(List<Integer> parkingLevelsList, List<Integer>
+            capacityList, List<VehicleParkingStrategy> vehicleParkingStrategiesList){
+        if(instance == null){
+            synchronized (ParkingManager.class){
+                if(instance == null){
+                    instance = new ParkingManager(parkingLevelsList, capacityList, vehicleParkingStrategiesList);
+                }
+            }
+        }
+        return instance;
+    }
+
+    private ParkingManager(List<Integer> parkingLevelsList, List<Integer>
+            capacityList, List<VehicleParkingStrategy> vehicleParkingStrategiesList){
+        if(levelParkingManagerMap == null){
+            levelParkingManagerMap = new HashMap<>();
+        }
+        for (int i = 0; i < parkingLevelsList.size(); i++) {
+            levelParkingManagerMap.put(parkingLevelsList.get(i), LevelParkingManager.getInstance(parkingLevelsList
+                    .get(i), capacityList.get(i), vehicleParkingStrategiesList.get(i)));
+        }
+    }
+    @Override
+    public int parkCar(int level, Vehicle vehicle) {
+        return 0;
+    }
+
+    @Override
+    public boolean leaveCar(int level, int slotNumber) {
+        return false;
+    }
+
+    @Override
+    public List<String> getStatus(int level) {
+        return null;
+    }
+
+    @Override
+    public List<String> getRegistrationNumbersForColor(int level, String color) {
+        return null;
+    }
+
+    @Override
+    public List<Integer> getSlotNumbersFromColor(int level, String colour) {
+        return null;
+    }
+
+    @Override
+    public int getSlotNoFromRegistrationNumber(int level, String registrationNo) {
+        return 0;
+    }
+
+    @Override
+    public int getAvailableSlotsCount(int level) {
+        return 0;
+    }
+
+    @Override
+    public void doSystemCleanup() {
+
+    }
+}
