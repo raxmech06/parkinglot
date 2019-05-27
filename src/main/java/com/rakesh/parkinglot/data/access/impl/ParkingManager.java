@@ -52,13 +52,13 @@ public class ParkingManager<T extends Vehicle> implements IParkingManager<T> {
     }
 
     @Override
-    public List<String> getRegistrationNumbersForColor(int level, String color) {
-        return levelParkingManagerMap.get(level).getRegistrationNumbersForColor(color);
+    public List<String> getRegistrationNumbersForColor(int level, String colour) {
+        return levelParkingManagerMap.get(level).getRegistrationNumbersForColor(colour);
     }
 
     @Override
-    public List<Integer> getSlotNumbersFromColor(int level, String color) {
-        return levelParkingManagerMap.get(level).getSlotNumbersFromColor(color);
+    public List<Integer> getSlotNumbersFromColor(int level, String colour) {
+        return levelParkingManagerMap.get(level).getSlotNumbersFromColor(colour);
     }
 
     @Override
