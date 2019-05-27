@@ -6,6 +6,7 @@ import com.rakesh.parkinglot.parkingstrategy.api.VehicleParkingStrategy;
 import com.rakesh.parkinglot.parkingstrategy.impl.ShortestDisFirstParkingStrategy;
 import com.rakesh.parkinglot.util.ParkingConstantUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -77,31 +78,65 @@ public class LevelParkingManager<T extends Vehicle> implements ILevelParkingMana
 
     @Override
     public List<String> getStatus() {
-        return null;
+        List<String> statusList = new ArrayList<>();
+        for (int i = 0; i < capacity.get(); i++) {
+            Optional<T> vehicle = slotVehicleMap.get(i);
+            if (vehicle.isPresent()) {
+                statusList.add(i + "\t\t" + vehicle.get().getRegistrationNumber() + "\t\t" + vehicle.get().getColor());
+            }
+        }
+        return statusList;
     }
 
     @Override
     public List<String> getRegistrationNumbersForColor(String color) {
-        return null;
+        List<String> vehiclesWithColorList = new ArrayList<>();
+        for (int i = 0; i < capacity.get(); i++) {
+            Optional<T> vehicle = slotVehicleMap.get(i);
+            if (vehicle.isPresent() && color.equalsIgnoreCase(vehicle.get().getColor())) {
+                vehiclesWithColorList.add(vehicle.get().getRegistrationNumber());
+            }
+        }
+        return vehiclesWithColorList;
     }
 
     @Override
-    public List<Integer> getSlotNumbersFromColor(String colour) {
-        return null;
+    public List<Integer> getSlotNumbersFromColor(String color) {
+        List<Integer> slotsWithVehicleColorList = new ArrayList<>();
+        for (int i = 0; i < capacity.get(); i++) {
+            Optional<T> vehicle = slotVehicleMap.get(i);
+            if (vehicle.isPresent() && color.equalsIgnoreCase(vehicle.get().getColor())) {
+                slotsWithVehicleColorList.add(i);
+            }
+        }
+        return slotsWithVehicleColorList;
     }
 
     @Override
     public int getSlotNoFromRegistrationNumber(String registrationNo) {
-        return 0;
+        int result = ParkingConstantUtil.NOT_FOUND;
+        for (int i = 0; i < capacity.get(); i++) {
+            Optional<T> vehicle = slotVehicleMap.get(i);
+            if (vehicle.isPresent() && registrationNo.equalsIgnoreCase(vehicle.get().getRegistrationNumber())) {
+                result = i;
+                break;
+            }
+        }
+        return result;
     }
 
     @Override
     public int getAvailableSlotsCount() {
-        return 0;
+        return availability.get();
     }
 
     @Override
     public void doSystemCleanup() {
-
+        this.level = null;
+        this.capacity = null;
+        this.availability = null;
+        this.vehicleParkingStrategy = null;
+        slotVehicleMap = null;
+        instance = null;
     }
 }
