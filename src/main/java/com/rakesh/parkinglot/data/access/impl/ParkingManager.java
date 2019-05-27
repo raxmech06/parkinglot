@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ParkingManager<T extends Vehicle> implements IParkingManager {
+public class ParkingManager<T extends Vehicle> implements IParkingManager<T> {
     private Map<Integer, ILevelParkingManager<T>> levelParkingManagerMap;
     private static ParkingManager instance = null;
 
@@ -36,13 +36,13 @@ public class ParkingManager<T extends Vehicle> implements IParkingManager {
         }
     }
     @Override
-    public int parkCar(int level, Vehicle vehicle) {
-        return 0;
+    public int parkCar(int level, T vehicle) {
+        return levelParkingManagerMap.get(level).parkCar(vehicle);
     }
 
     @Override
     public boolean leaveCar(int level, int slotNumber) {
-        return false;
+        return levelParkingManagerMap.get(level).leaveCar(slotNumber);
     }
 
     @Override
