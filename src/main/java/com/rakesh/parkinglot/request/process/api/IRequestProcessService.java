@@ -1,5 +1,6 @@
 package com.rakesh.parkinglot.request.process.api;
 
+import com.rakesh.parkinglot.exception.ParkingException;
 import com.rakesh.parkinglot.service.api.IParkingService;
 import com.rakesh.parkinglot.util.ParkingConstantUtil;
 
@@ -9,7 +10,7 @@ import java.util.Map;
 public interface IRequestProcessService {
     public static Map<String, Integer> commandsParameterMap = new HashMap<String, Integer>();
     public void setParkingService(IParkingService parkingService);
-    public void executeRequest(String request);
+    public void executeRequest(String request) throws ParkingException;
     public default boolean validateRequest(String request) {
         boolean validRequest = true;
         try {
