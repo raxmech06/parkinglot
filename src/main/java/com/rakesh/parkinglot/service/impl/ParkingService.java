@@ -34,12 +34,44 @@ public class ParkingService implements IParkingService {
     }
 
     @Override
-    public Optional<Integer> park(int level, Vehicle vehicle) {
-        return Optional.empty();
+    public Optional<Integer> park(int level, Vehicle vehicle) throws ParkingException {
+        Optional<Integer> value = Optional.empty();
+        lock.writeLock().lock();
+        validateParkingLot();
+        try {
+            value = Optional.of(parkingManager.parkCar(level, vehicle));
+            if (value.get() == ParkingConstantUtil.NOT_AVAILABLE) {
+                System.out.println("Sorry, parking lot is full");
+            } else if (value.get() == ParkingConstantUtil.VEHICLE_ALREADY_EXIST) {
+                System.out.println("Sorry, another vehicle is already parked.");
+            } else {
+                System.out.println("Allocated slot number: " + value.get());
+            }
+        } catch (Exception exp) {
+            throw new ParkingException(ParkingException.ErrorCode.PROCESSING_ERROR.getMessage(), exp);
+        } finally {
+            lock.writeLock().unlock();
+        }
+        return value;
     }
 
     @Override
-    public void unPark(int level, int slotNumber) {
+    public void unPark(int level, int slotNumber) throws ParkingException {
+        lock.writeLock().lock();
+        validateParkingLot();
+        try {
+            if (parkingManager.leaveCar(level, slotNumber)) {
+                System.out.println("Slot number " + slotNumber + " is free");
+            } else {
+                System.out.println("Slot number " + slotNumber + " is already empty");
+                System.out.println();
+            }
+        } catch (Exception exp) {
+            throw new ParkingException(ParkingException.ErrorCode.INVALID_VALUE.getMessage().replace("{variable}",
+                    "slot number"), exp);
+        } finally {
+            lock.writeLock().unlock();
+        }
 
     }
 
@@ -72,8 +104,9 @@ public class ParkingService implements IParkingService {
     public void doSystemCleanup() {
 
     }
+
     private void validateParkingLot() throws ParkingException {
-        if(parkingManager == null){
+        if (parkingManager == null) {
             throw new ParkingException(ParkingException.ErrorCode.PARKING_NOT_EXIST_ERROR.getMessage());
         }
     }
