@@ -4,6 +4,7 @@ import com.rakesh.parkinglot.data.access.api.ILevelParkingManager;
 import com.rakesh.parkinglot.datamodel.Vehicle;
 import com.rakesh.parkinglot.parkingstrategy.api.VehicleParkingStrategy;
 import com.rakesh.parkinglot.parkingstrategy.impl.ShortestDisFirstParkingStrategy;
+import com.rakesh.parkinglot.util.ParkingConstantUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -48,12 +49,30 @@ public class LevelParkingManager<T extends Vehicle> implements ILevelParkingMana
 
     @Override
     public int parkCar(T vehicle) {
-        return 0;
+        int availableSlot = 0;
+        if (availability.get() == 0) {
+            return ParkingConstantUtil.NOT_AVAILABLE;
+        } else {
+            availableSlot = vehicleParkingStrategy.getSlot();
+            if (slotVehicleMap.containsValue(Optional.of(vehicle))) {
+                return ParkingConstantUtil.VEHICLE_ALREADY_EXIST;
+            }
+            slotVehicleMap.put(availableSlot, Optional.of(vehicle));
+            availability.decrementAndGet();
+            vehicleParkingStrategy.removeSlot(availableSlot);
+        }
+        return availableSlot;
     }
 
     @Override
     public boolean leaveCar(int slotNumber) {
-        return false;
+        if (!slotVehicleMap.get(slotNumber).isPresent()) {
+            return false;
+        }
+        availability.incrementAndGet();
+        vehicleParkingStrategy.add(slotNumber);
+        slotVehicleMap.put(slotNumber, Optional.empty());
+        return true;
     }
 
     @Override
