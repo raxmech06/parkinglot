@@ -12,6 +12,7 @@ import com.rakesh.parkinglot.util.ParkingConstantUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ParkingService implements IParkingService {
@@ -76,33 +77,99 @@ public class ParkingService implements IParkingService {
     }
 
     @Override
-    public void getStatus(int level) {
-
+    public void getStatus(int level) throws ParkingException {
+        lock.readLock().lock();
+        validateParkingLot();
+        try {
+            System.out.println("Slot No. \t\t  Registration No \t\t Colour");
+            List<String> statusList = parkingManager.getStatus(level);
+            if (statusList.size() == 0)
+                System.out.println("Sorry, parking lot is empty.");
+            else {
+                for (String status : statusList) {
+                    System.out.println(status);
+                }
+            }
+        } catch (Exception e) {
+            throw new ParkingException(ParkingException.ErrorCode.PROCESSING_ERROR.getMessage(), e);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
-    public Optional<Integer> getAvailableSlotsCount(int level) {
-        return Optional.empty();
+    public Optional<Integer> getAvailableSlotsCount(int level) throws ParkingException {
+        lock.readLock().lock();
+        Optional<Integer> value = Optional.empty();
+        validateParkingLot();
+        try {
+            value = Optional.of(parkingManager.getAvailableSlotsCount(level));
+        } catch (Exception exp) {
+            throw new ParkingException(ParkingException.ErrorCode.PROCESSING_ERROR.getMessage(), exp);
+        } finally {
+            lock.readLock().unlock();
+        }
+        return value;
     }
 
     @Override
-    public void getRegNumberForColor(int level, String color) {
-
+    public void getRegNumberForColor(int level, String colour) throws ParkingException {
+        lock.readLock().lock();
+        validateParkingLot();
+        try {
+            List<String> registrationNumbersList = parkingManager.getRegistrationNumbersForColor(level, colour);
+            if (registrationNumbersList.size() == 0) {
+                System.out.println("Not Found");
+            } else {
+                System.out.println(String.join(",", registrationNumbersList));
+            }
+        } catch (Exception exp) {
+            throw new ParkingException(ParkingException.ErrorCode.PROCESSING_ERROR.getMessage(), exp);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
-    public void getSlotNumbersFromColor(int level, String colour) {
-
+    public void getSlotNumbersFromColor(int level, String colour) throws ParkingException {
+        lock.readLock().lock();
+        validateParkingLot();
+        try {
+            List<Integer> slotList = parkingManager.getSlotNumbersFromColor(level, colour);
+            if (slotList.size() == 0)
+                System.out.println("Not Found");
+            StringJoiner joiner = new StringJoiner(",");
+            for (Integer slot : slotList) {
+                joiner.add(slot + "");
+            }
+            System.out.println(joiner.toString());
+        } catch (Exception exp) {
+            throw new ParkingException(ParkingException.ErrorCode.PROCESSING_ERROR.getMessage(), exp);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
-    public int getSlotNoFromRegistrationNumber(int level, String registrationNumber) {
-        return 0;
+    public int getSlotNoFromRegistrationNumber(int level, String registrationNumber) throws ParkingException {
+        int value = -1;
+        lock.readLock().lock();
+        validateParkingLot();
+        try {
+            value = parkingManager.getSlotNoFromRegistrationNumber(level, registrationNumber);
+            System.out.println(value != -1 ? value : "Not Found");
+        } catch (Exception exp) {
+            throw new ParkingException(ParkingException.ErrorCode.PROCESSING_ERROR.getMessage(), exp);
+        } finally {
+            lock.readLock().unlock();
+        }
+        return value;
     }
 
     @Override
     public void doSystemCleanup() {
-
+        if (parkingManager != null)
+            parkingManager.doSystemCleanup();
     }
 
     private void validateParkingLot() throws ParkingException {
