@@ -31,7 +31,7 @@ public class ParkingService implements IParkingService {
         List<VehicleParkingStrategy> vehicleParkingStrategiesList = new ArrayList<>();
         vehicleParkingStrategiesList.add(new ShortestDisFirstParkingStrategy());
         parkingManager = ParkingManager.getInstance(parkingLevelsList, capacityList, vehicleParkingStrategiesList);
-        System.out.println("Created a parking lot with " + capacity + " 6 slots");
+        System.out.println("Created a parking lot with " + capacity + " slots");
     }
 
     @Override
@@ -81,7 +81,7 @@ public class ParkingService implements IParkingService {
         lock.readLock().lock();
         validateParkingLot();
         try {
-            System.out.println("Slot No. \t\t  Registration No \t\t Colour");
+            System.out.println("Slot No. \t  Registration No \t Colour");
             List<String> statusList = parkingManager.getStatus(level);
             if (statusList.size() == 0)
                 System.out.println("Sorry, parking lot is empty.");
@@ -121,7 +121,7 @@ public class ParkingService implements IParkingService {
             if (registrationNumbersList.size() == 0) {
                 System.out.println("Not Found");
             } else {
-                System.out.println(String.join(",", registrationNumbersList));
+                System.out.println(String.join(", ", registrationNumbersList));
             }
         } catch (Exception exp) {
             throw new ParkingException(ParkingException.ErrorCode.PROCESSING_ERROR.getMessage(), exp);
@@ -138,7 +138,7 @@ public class ParkingService implements IParkingService {
             List<Integer> slotList = parkingManager.getSlotNumbersFromColor(level, colour);
             if (slotList.size() == 0)
                 System.out.println("Not Found");
-            StringJoiner joiner = new StringJoiner(",");
+            StringJoiner joiner = new StringJoiner(", ");
             for (Integer slot : slotList) {
                 joiner.add(slot + "");
             }
