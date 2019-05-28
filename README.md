@@ -9,6 +9,7 @@ Maven 3.5.3
 Junit 4.11
 
 Points to note:
+
 1.) bin/setup.sh
     To install all dependencies, compile and run tests
     
