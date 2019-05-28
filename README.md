@@ -17,9 +17,9 @@ Points to note:
 2.) bin/parking_lot.sh <input file>
 
     To run the code so it accepts input from a file. 
-    The file has been placed here parkinglot/src/main/resources/file_inputs.txt, so uncommenting the line #3 
-    in parking_lot.sh (#arg1=./src/main/resources/file_inputs.txt) will run the input from a file by executing
-    bin/parking_lot.sh
+    The file has been placed here parkinglot/src/main/resources/file_inputs.txt, so uncommenting 
+    the line #3 in parking_lot.sh (#arg1=./src/main/resources/file_inputs.txt) will run the input 
+    from a file by just executing: bin/parking_lot.sh
     
 3.) bin/parking_lot.sh
 
