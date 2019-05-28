@@ -11,6 +11,12 @@ public interface IRequestProcessService {
     public static Map<String, Integer> commandsParameterMap = new HashMap<String, Integer>();
     public void setParkingService(IParkingService parkingService);
     public void executeRequest(String request) throws ParkingException;
+
+    /**
+     * This method validates the number of parameters inout for a request
+     * @param request
+     * @return
+     */
     public default boolean validateRequest(String request) {
         boolean validRequest = true;
         try {
@@ -18,15 +24,15 @@ public interface IRequestProcessService {
             int params = ParkingConstantUtil.getRequestsParameterMap().get(inputs[0]);
             switch (inputs.length) {
                 case 1:
-                    if (params != 0) // e.g status -> inputs = 1
+                    if (params != 0)
                         validRequest = false;
                     break;
                 case 2:
-                    if (params != 1) // create_parking_lot 6 -> inputs = 2
+                    if (params != 1)
                         validRequest = false;
                     break;
                 case 3:
-                    if (params != 2) // park KA-01-P-333 White -> inputs = 3
+                    if (params != 2)
                         validRequest = false;
                     break;
                 default:
