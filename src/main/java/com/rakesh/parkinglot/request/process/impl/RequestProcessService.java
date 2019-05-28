@@ -30,6 +30,9 @@ public class RequestProcessService implements IRequestProcessService {
                 int parkingSlotNumber = Integer.parseInt(requestParts[1]);
                 parkingService.unPark(level, parkingSlotNumber);
                 break;
+            case ParkingConstantUtil.STATUS :
+                parkingService.getStatus(level);
+                break;
             case ParkingConstantUtil.REG_NUMBER_FOR_CARS_WITH_COLOR :
                 parkingService.getRegNumberForColor(level, requestParts[1]);
                 break;
