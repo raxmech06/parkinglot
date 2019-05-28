@@ -104,6 +104,7 @@ public class ParkingService implements IParkingService {
         validateParkingLot();
         try {
             value = Optional.of(parkingManager.getAvailableSlotsCount(level));
+            System.out.println(value.get());
         } catch (Exception exp) {
             throw new ParkingException(ParkingException.ErrorCode.PROCESSING_ERROR.getMessage(), exp);
         } finally {
