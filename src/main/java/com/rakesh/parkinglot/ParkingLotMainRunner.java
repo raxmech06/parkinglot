@@ -1,15 +1,21 @@
 package com.rakesh.parkinglot;
 
+import com.rakesh.parkinglot.exception.ParkingException;
 import com.rakesh.parkinglot.request.process.api.IRequestProcessService;
 import com.rakesh.parkinglot.request.process.impl.RequestProcessService;
 import com.rakesh.parkinglot.service.impl.ParkingService;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class ParkingLotMainRunner {
     private static Map<Integer, String> requestMap = new HashMap<>();
+
     static {
         requestMap.put(1, "create_parking_lot 6");
         requestMap.put(2, "park KA-01-HH-1234 White");
@@ -26,14 +32,14 @@ public class ParkingLotMainRunner {
         requestMap.put(13, "slot_numbers_for_cars_with_colour White");
         requestMap.put(14, "slot_number_for_registration_number KA-01-HH-3141");
         requestMap.put(15, "slot_number_for_registration_number MH-04-AY-1111");
-        requestMap.put(16,"exit");
+        requestMap.put(16, "exit");
     }
 
-    private static void runCommands(){
+    private static void runCommands() {
         IRequestProcessService requestProcessService = new RequestProcessService();
         requestProcessService.setParkingService(new ParkingService());
         String request;
-        for (Integer i: requestMap.keySet()) {
+        for (Integer i : requestMap.keySet()) {
             request = requestMap.get(i);
             try {
                 requestProcessService.executeRequest(request.trim());
@@ -44,32 +50,74 @@ public class ParkingLotMainRunner {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParkingException {
         //To execute all requests uncomment the following line
         //runCommands();
         IRequestProcessService requestProcessService = new RequestProcessService();
         requestProcessService.setParkingService(new ParkingService());
         String input = null;
         Scanner scanner = new Scanner(System.in);
-        printMessageForUser();
-        System.out.println("Please enter 'exit' to end execution");
-        System.out.println("Request:");
-        while (true){
-            input = scanner.nextLine();
-            if (input.equalsIgnoreCase("exit")) {
-                break;
-            } else {
-                if (requestProcessService.validateRequest(input)) {
-                    try {
-                        requestProcessService.executeRequest(input.trim());
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
+        try {
+            printMessageForUser();
+            switch (args.length) {
+                case 0: {
+                    System.out.println("Please enter 'exit' to end execution");
+                    System.out.println("Request:");
+                    while (true) {
+                        input = scanner.nextLine();
+                        if (input.equalsIgnoreCase("exit")) {
+                            break;
+                        } else {
+                            if (requestProcessService.validateRequest(input)) {
+                                try {
+                                    requestProcessService.executeRequest(input.trim());
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            } else {
+                                printMessageForUser();
+                            }
+                        }
                     }
-                } else {
-                    printMessageForUser();
+                    break;
                 }
+                case 1: {
+                    File fileInput = new File(args[0]);
+                    BufferedReader bufferReader = null;
+                    try {
+                        bufferReader = new BufferedReader(new FileReader(fileInput));
+                        int lineNo = 1;
+                        while ((input = bufferReader.readLine()) != null) {
+                            input = input.trim();
+                            if (requestProcessService.validateRequest(input)) {
+                                try {
+                                    requestProcessService.executeRequest(input);
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            } else
+                                System.out.println("Incorrect Command Found at line: " + lineNo + " ,Input: " + input);
+                            lineNo++;
+                        }
+                    } catch (Exception e) {
+                        throw new ParkingException(ParkingException.ErrorCode.INVALID_FILE.getMessage(), e);
+                    } finally {
+                        try {
+                            if (bufferReader != null)
+                                bufferReader.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                    break;
+                }
+                default:
+                    System.out.println("Invalid input. Usage Style: java -jar <jar_file_path> <input_file_path>");
             }
+        } catch (ParkingException exp) {
+            exp.printStackTrace();
+            System.out.println(exp.getMessage());
         }
+
     }
 
     private static void printMessageForUser() {
