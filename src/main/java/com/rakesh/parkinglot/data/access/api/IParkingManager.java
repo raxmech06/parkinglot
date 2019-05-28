@@ -11,7 +11,7 @@ public interface IParkingManager <T extends Vehicle> {
 
     public List<String> getStatus(int level);
 
-    public List<String> getRegistrationNumbersForColor(int level, String color);
+    public List<String> getRegistrationNumbersForColor(int level, String colour);
 
     public List<Integer> getSlotNumbersFromColor(int level, String colour);
 
